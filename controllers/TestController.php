@@ -20,4 +20,10 @@ class TestController extends Controller
             'model' => $model,
         ]);
     }
+
+    public function actionTurnOn()
+    {
+        $state = \Yii::$app->test->turnOn();
+        return $this->render('turn', ['state' => $state]);
+    }
 }
