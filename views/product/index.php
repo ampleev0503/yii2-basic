@@ -36,10 +36,10 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                     'attribute' => 'created_at',
                     'contentOptions' => ['class' => 'small'],
-                    'format' => 'html',
-                    'value' => function(\app\models\Product $model) {
-                        return \Yii::$app->formatter->format($model->created_at, 'datetime');;
-                    },
+                    'format' => 'datetime',
+//                    'value' => function(\app\models\Product $model) {
+//                        return \Yii::$app->formatter->format($model->created_at, 'datetime');
+//                    },
             ],
             //'created_at:datetime',
 
