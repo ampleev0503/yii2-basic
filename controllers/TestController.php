@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Product;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 
 class TestController extends Controller
@@ -12,9 +13,13 @@ class TestController extends Controller
         $model = new Product();
 
         $model->id = 1;
-        $model->name = "GUESS";
-        $model->category = "shorts";
-        $model->cost = 2000;
+        $model->name = "  <b>  Test   </b>  ";
+        $model->price = 0;
+        $model->created_at = 1520269969;
+
+        $model->validate();
+
+        return VarDumper::dumpAsString($model->safeAttributes(), 5, true);
 
         return $this->render('index', [
             'model' => $model,
