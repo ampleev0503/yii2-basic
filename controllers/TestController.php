@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Product;
+use yii\db\Query;
 use yii\helpers\VarDumper;
 use yii\web\Controller;
 
@@ -30,5 +31,60 @@ class TestController extends Controller
     {
         $state = \Yii::$app->test->turnOn();
         return $this->render('turn', ['state' => $state]);
+    }
+
+    public function actionInsert()
+    {
+           // с помощью insert()
+        \Yii::$app->db->createCommand()->insert('user', [
+            'username' => 'fourth_name',
+            'name' => 'Petr',
+            'password_hash' => md5('pass4'),
+            'creator_id' => 1,
+            'created_at' => 1539109097,
+        ])->execute();
+
+        \Yii::$app->db->createCommand()->insert('user', [
+            'username' => 'fifth_name',
+            'name' => 'Olga',
+            'password_hash' => md5('pass5'),
+            'creator_id' => 2,
+            'created_at' => 1539109097,
+        ])->execute();
+
+        \Yii::$app->db->createCommand()->insert('user', [
+            'username' => 'sixth_name',
+            'name' => 'Anna',
+            'password_hash' => md5('pass6'),
+            'creator_id' => 3,
+            'created_at' => 1539109097,
+        ])->execute();
+
+        \Yii::$app->db->createCommand()->batchInsert('task', ['title', 'description', 'creator_id', 'created_at'], [
+            ['The first task', 'test task 1', 1, 1539109097],
+            ['The second task', 'test task 2', 2, 1539109097],
+            ['The third task', 'test task 3', 3, 1539109097],
+        ])->execute();
+    }
+
+    public function actionSelect()
+    {
+        $query1 = (new Query())->from('user')->where(['=', 'id', 1])->one();
+
+        $result[] = $query1;
+
+        $query2 = (new Query())->from('user')->where(['>', 'id', 1])->all();
+
+        $result[] = $query2;
+
+        $query3 = (new Query())->from('user')->count();
+
+        $result[] = $query3;
+
+        $query4 = (new Query())->from('task')->innerJoin('user', 'user.id = task.creator_id')->all();
+
+        $result[] = $query4;
+
+        return VarDumper::dumpAsString($result, 5, true);
     }
 }
