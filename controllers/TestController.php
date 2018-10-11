@@ -69,21 +69,21 @@ class TestController extends Controller
 
     public function actionSelect()
     {
-        $query1 = (new Query())->from('user')->where(['=', 'id', 1])->one();
+        $query1 = (new Query())->from('user')->where(['=', 'id', 1]);
 
-        $result[] = $query1;
+        $result[] = $query1->one();
 
-        $query2 = (new Query())->from('user')->where(['>', 'id', 1])->all();
+        $query2 = (new Query())->from('user')->where(['>', 'id', 1])->orderBy(['name' => SORT_ASC]);
 
-        $result[] = $query2;
+        $result[] = $query2->all();
 
-        $query3 = (new Query())->from('user')->count();
+        $query3 = (new Query())->from('user');
 
-        $result[] = $query3;
+        $result[] = $query3->count();
 
-        $query4 = (new Query())->from('task')->innerJoin('user', 'user.id = task.creator_id')->all();
+        $query4 = (new Query())->from('task')->innerJoin('user', 'user.id = task.creator_id');
 
-        $result[] = $query4;
+        $result[] = $query4->all();
 
         return VarDumper::dumpAsString($result, 5, true);
     }
