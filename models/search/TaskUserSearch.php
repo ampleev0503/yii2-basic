@@ -5,12 +5,12 @@ namespace app\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Product;
+use app\models\TaskUser;
 
 /**
- * ProductSearch represents the model behind the search form of `app\models\Product`.
+ * TaskUserSearch represents the model behind the search form of `app\models\TaskUser`.
  */
-class ProductSearch extends Product
+class TaskUserSearch extends TaskUser
 {
     /**
      * {@inheritdoc}
@@ -18,8 +18,7 @@ class ProductSearch extends Product
     public function rules()
     {
         return [
-            [['id', 'created_at'], 'integer'],
-            [['name', 'price'], 'safe'],
+            [['id', 'task_id', 'user_id'], 'integer'],
         ];
     }
 
@@ -41,7 +40,7 @@ class ProductSearch extends Product
      */
     public function search($params)
     {
-        $query = Product::find();
+        $query = TaskUser::find();
 
         // add conditions that should always apply here
 
@@ -60,11 +59,9 @@ class ProductSearch extends Product
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'created_at' => $this->created_at,
+            'task_id' => $this->task_id,
+            'user_id' => $this->user_id,
         ]);
-
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'price', $this->price]);
 
         return $dataProvider;
     }
