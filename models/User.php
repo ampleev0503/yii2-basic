@@ -31,7 +31,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
     const RELATION_TASKS_CREATED = 'tasksCreated';
     const RELATION_TASKS_USERS = 'taskUsers';
-    const RELATION_TASKS_SHARED = 'sharedTasks';
+    const RELATION_TASKS_ACCESSED = 'accessedTasks';
 
     /**
      * {@inheritdoc}

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Task;
 use Yii;
 use app\models\User;
 use app\models\search\UserSearch;
@@ -62,10 +63,15 @@ class UserController extends Controller
 //            'models2' => $models2,
 //        ]);
 
-        $model = User::findOne(3);
-        $result = $model->accessedTasks;
+//        $model = User::findOne(3);
+//        $result = $model->accessedTasks;
+//
+//        return VarDumper::dumpAsString($result, 5, true);
 
-        return VarDumper::dumpAsString($result, 5, true);
+        $user = User::findOne(3);
+        $task = Task::findone(2);
+
+        $user->link(User::RELATION_TASKS_ACCESSED, $task);
     }
 
     /**
