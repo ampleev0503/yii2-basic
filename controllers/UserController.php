@@ -5,6 +5,8 @@ namespace app\controllers;
 use Yii;
 use app\models\User;
 use app\models\search\UserSearch;
+use yii\filters\AccessControl;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -14,41 +16,56 @@ use yii\filters\VerbFilter;
  */
 class UserController extends Controller
 {
-    public function actionTest()
-    {
-        $model = new User();
-        $model->username = 'First username';
-        $model->name = 'First name';
-        $model->password_hash = 'evfvervfvf';
-        $model->created_at = time();
-        $model->creator_id = 1;
-
-        $model->save();
-
-        $models1 = User::find()->with(User::RELATION_TASKS_CREATED)->all();
-        $models2 = User::find()->innerJoinWith(User::RELATION_TASKS_CREATED)->all();
-
-        //return VarDumper::dumpAsString($models1, 5, true);
-
-        return $this->render('test', [
-            'models1' => $models1,
-            'models2' => $models2,
-        ]);
-    }
-
     /**
      * {@inheritdoc}
      */
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        //'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'], // @ - для авторизованных; ! - для неавторизованных
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'logout' => ['post'],
                 ],
             ],
         ];
+    }
+
+    public function actionTest()
+    {
+//        $model = new User();
+//        $model->username = 'First username';
+//        $model->name = 'First name';
+//        $model->password_hash = 'evfvervfvf';
+//        $model->created_at = time();
+//        $model->creator_id = 1;
+//
+//        $model->save();
+//
+//        $models1 = User::find()->with(User::RELATION_TASKS_CREATED)->all();
+//        $models2 = User::find()->innerJoinWith(User::RELATION_TASKS_CREATED)->all();
+//
+//        //return VarDumper::dumpAsString($models1, 5, true);
+//
+//        return $this->render('test', [
+//            'models1' => $models1,
+//            'models2' => $models2,
+//        ]);
+
+        $model = User::findOne(3);
+        $result = $model->accessedTasks;
+
+        return VarDumper::dumpAsString($result, 5, true);
     }
 
     /**
@@ -87,6 +104,7 @@ class UserController extends Controller
     public function actionCreate()
     {
         $model = new User();
+        //$model->creator_id = 2;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
