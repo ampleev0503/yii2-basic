@@ -24,17 +24,21 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
             'title',
             'description:ntext',
-            'creator_id',
-            'updater_id',
-            //'created_at',
-            //'updated_at',
+            'created_at:datetime',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{share} {view} {update} {delete}',
+                    'buttons' => [
+                            'share' => function ($url, \app\models\Task $model, $key) {
+                                        $ico = \yii\bootstrap\Html::icon('share');
+                                         return Html::a($ico, ['task-user/create', 'taskId' => $model->id]);
+                                    },
+                    ],
+            ],
         ],
     ]); ?>
     <?php Pjax::end(); ?>
