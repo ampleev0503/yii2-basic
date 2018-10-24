@@ -8,6 +8,7 @@ use app\models\Task;
 use app\models\search\TaskSearch;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -62,6 +63,47 @@ class TaskController extends Controller
     }
 
     /**
+     * Lists all Task models.
+     * @return mixed
+     */
+    public function actionShared()
+    {
+        $searchModel = new TaskSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+
+        /** @var $query TaskQuery*/
+        $query = $dataProvider->query;
+        $query->byCreator(Yii::$app->user->id)
+        ->innerJoinWith(Task::RELATION_TASK_USERS);
+
+        return $this->render('shared', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all Task models.
+     * @return mixed
+     */
+    public function actionAccessed()
+    {
+        $searchModel = new TaskSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        /** @var $query TaskQuery*/
+        $query = $dataProvider->query;
+        $query->innerJoinWith(Task::RELATION_TASK_USERS)
+            ->where(['user_id' => Yii::$app->user->id]);
+
+        return $this->render('accessed', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
      * Displays a single Task model.
      * @param integer $id
      * @return mixed
@@ -103,9 +145,16 @@ class TaskController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if(!$model || $model->creator_id != Yii::$app->user->id)
+        {
+            throw new ForbiddenHttpException();
+        }
+
+
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            Yii::$app->session->setFlash('success', 'Задача успешно обновлена');
+            return $this->redirect(['task/my']);
         }
 
         return $this->render('update', [
@@ -122,9 +171,18 @@ class TaskController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        //$this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        if(!$model || $model->creator_id != Yii::$app->user->id)
+        {
+            throw new ForbiddenHttpException();
+        }
 
-        return $this->redirect(['index']);
+        $model->delete();
+
+        Yii::$app->session->setFlash('success', 'Задача успешно удалена');
+
+        return $this->redirect(['task/my']);
     }
 
     /**
