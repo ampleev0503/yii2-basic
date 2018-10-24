@@ -7,6 +7,7 @@ use app\models\User;
 use Yii;
 use app\models\TaskUser;
 use app\models\search\TaskUserSearch;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\helpers\VarDumper;
 use yii\web\Controller;
@@ -93,12 +94,11 @@ class TaskUserController extends Controller
             return $this->redirect(['task/my']);
         }
 
-          // получаем список пользователей, которым уже предоставлен доступ к задаче
-        $currAccessedUsers = TaskUser::find()->where(['task_id' => $taskId])->select('user_id')->column();
+        $currAccessedUsersQuery = (new Query())->from('task_user')->select('user_id')->where(['task_id' => $taskId]);
 
         $users = User::find()
             ->where(['<>', 'id', Yii::$app->user->id])
-            ->andWhere(['not in', 'id', $currAccessedUsers])
+            ->andWhere(['not in', 'id', $currAccessedUsersQuery])
             ->select('username')
             ->indexBy('id')
             ->column();
