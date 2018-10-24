@@ -94,11 +94,11 @@ class TaskUserController extends Controller
             return $this->redirect(['task/my']);
         }
 
-        $currAccessedUsersQuery = (new Query())->from('task_user')->select('user_id')->where(['task_id' => $taskId]);
+        $queryAccessedUsers = TaskUser::find()->select('user_id')->where(['task_id' => $taskId]);
 
         $users = User::find()
             ->where(['<>', 'id', Yii::$app->user->id])
-            ->andWhere(['not in', 'id', $currAccessedUsersQuery])
+            ->andWhere(['not in', 'id', $queryAccessedUsers])
             ->select('username')
             ->indexBy('id')
             ->column();
