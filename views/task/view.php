@@ -5,6 +5,8 @@ use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Task */
+/* @var $dp yii\data\ActiveDataProvider */
+
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['index']];
@@ -38,5 +40,36 @@ $this->params['breadcrumbs'][] = $this->title;
             'updated_at',
         ],
     ]) ?>
+
+    <?= \yii\grid\GridView::widget([
+        'dataProvider' => $dp,
+        'columns' => [
+
+
+            [
+                'label' => 'Username',
+                'value' => function(\app\models\TaskUser $model) {
+                    return $model->user->username;
+                },
+            ],
+
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{delete}',
+                'buttons' => [
+                    'delete' => function ($url, \app\models\TaskUser $model, $key) {
+                        $ico = \yii\bootstrap\Html::icon('remove');
+                        return Html::a($ico, ['task-user/delete', 'id' => $model->id],
+                            [
+                                'data' =>  [
+                                    'confirm' => 'Удалить пользователю доступ к этой задаче?',
+                                    'method' => 'post',
+                                ]
+                            ]);
+                    },
+                ],
+            ],
+        ],
+    ]); ?>
 
 </div>

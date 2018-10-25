@@ -110,9 +110,17 @@ class TaskUserController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
 
-        return $this->redirect(['index']);
+        if(!$model || $model->task->creator_id != Yii::$app->user->id)
+        {
+            throw new ForbiddenHttpException();
+        }
+
+        $model->delete();
+
+        Yii::$app->session->setFlash('success', 'Доступ к этой задаче удален');
+        return $this->redirect(['task/shared']);
     }
 
     /**

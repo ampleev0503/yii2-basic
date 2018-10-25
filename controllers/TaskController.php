@@ -6,6 +6,7 @@ use app\models\query\TaskQuery;
 use Yii;
 use app\models\Task;
 use app\models\search\TaskSearch;
+use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -111,8 +112,14 @@ class TaskController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        $dp = new ActiveDataProvider([
+            'query' => $model->getTaskUsers(),
+        ]);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'dp' => $dp,
         ]);
     }
 
