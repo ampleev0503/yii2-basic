@@ -41,35 +41,39 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
-    <?= \yii\grid\GridView::widget([
-        'dataProvider' => $dp,
-        'columns' => [
+    <?php if ($model->creator_id == Yii::$app->user->id): ?>
+        <?= \yii\grid\GridView::widget([
+            'dataProvider' => $dp,
+            'columns' => [
 
 
-            [
-                'label' => 'Username',
-                'value' => function(\app\models\TaskUser $model) {
-                    return $model->user->username;
-                },
-            ],
-
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{delete}',
-                'buttons' => [
-                    'delete' => function ($url, \app\models\TaskUser $model, $key) {
-                        $ico = \yii\bootstrap\Html::icon('remove');
-                        return Html::a($ico, ['task-user/delete', 'id' => $model->id],
-                            [
-                                'data' =>  [
-                                    'confirm' => 'Удалить пользователю доступ к этой задаче?',
-                                    'method' => 'post',
-                                ]
-                            ]);
+                [
+                    'label' => 'Username',
+                    'value' => function(\app\models\TaskUser $model) {
+                        return $model->user->username;
                     },
                 ],
+
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{delete}',
+                    'buttons' => [
+                        'delete' => function ($url, \app\models\TaskUser $model, $key) {
+                            $ico = \yii\bootstrap\Html::icon('remove');
+                            return Html::a($ico, ['task-user/delete', 'id' => $model->id],
+                                [
+                                    'data' =>  [
+                                        'confirm' => 'Удалить пользователю доступ к этой задаче?',
+                                        'method' => 'post',
+                                    ]
+                                ]);
+                        },
+                    ],
+                ],
             ],
-        ],
-    ]); ?>
+        ]); ?>
+    <?php endif; ?>
+
+
 
 </div>
